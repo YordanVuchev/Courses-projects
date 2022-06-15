@@ -23,6 +23,7 @@ const renderCountry = function (data, className = '') {
  `;
 
   countriesContainer.insertAdjacentHTML('beforeend', html);
+  countriesContainer.style.opacity = 1;
 };
 
 ///////////////////////////////////////
@@ -262,34 +263,84 @@ const wait = function (seconds) {
 
 // btn.addEventListener('click', whereAmI);
 
-const createImage = function (path) {
+// const createImage = function (path) {
+//   return new Promise(function (resolve, reject) {
+//     if (path) {
+//       const image = document.createElement('img');
+//       image.src = path;
+//       document.querySelector('.images').append(image);
+//       return resolve(image);
+//     } else {
+//       return reject(new Error('Your path to the image is wrong'));
+//     }
+//   });
+// };
+
+// let currentImg;
+// createImage('./img/img-1.jpg')
+//   .then(img => {
+//     currentImg = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//     return createImage('./img/img-2.jpg');
+//   })
+//   .then(img => {
+//     currentImg = img;
+//     return wait(2);
+//   })
+//   .then(() => {
+//     currentImg.style.display = 'none';
+//   })
+//   .catch(err => console.error(err));
+
+const getPosition = function () {
   return new Promise(function (resolve, reject) {
-    if (path) {
-      const image = document.createElement('img');
-      image.src = path;
-      document.querySelector('.images').append(image);
-      return resolve(image);
-    } else {
-      return reject(new Error('Your path to the image is wrong'));
-    }
+    navigator.geolocation.getCurrentPosition(resolve, reject);
   });
 };
 
-let currentImg;
-createImage('./img/img-1.jpg')
-  .then(img => {
-    currentImg = img;
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = 'none';
-    return createImage('./img/img-2.jpg');
-  })
-  .then(img => {
-    currentImg = img;
-    return wait(2);
-  })
-  .then(() => {
-    currentImg.style.display = 'none';
-  })
-  .catch(err => console.error(err));
+const whereAmI = async function () {
+  try {
+    const pos = await getPosition();
+
+    const { latitude: lat, longitude: lng } = pos.coords;
+    const resGeo = await fetch(`https://geocode.xyz/${lat},${lng}?geoit=json`);
+
+    if (!resGeo.ok)
+      throw new Error('Problem getting the data for your location');
+
+    const resGeoData = await resGeo.json();
+    const res = await fetch(
+      `https://restcountries.com/v2/name/${resGeoData.country}`
+    );
+    if (!res.ok) throw new Error('Country not found');
+    const data = await res.json();
+    renderCountry(data[0]);
+
+    return `You are in ${resGeoData.city}, ${resGeoData.country}`;
+  } catch (err) {
+    console.error(err.message);
+    //Rejec promise returned by this async function
+    throw err;
+  }
+};
+
+console.log('Getting location first');
+// whereAmI()
+//   .then(city => console.log(city))
+//   .catch(err => console.error(err))
+//   .finally(() => {
+//     console.log('Getting location finished');
+//   });
+
+(async function () {
+  try {
+    const city = await whereAmI();
+    console.log(city);
+    console.log('Getting location finished');
+  } catch (err) {
+    console.error(err);
+  }
+})();
