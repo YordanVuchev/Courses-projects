@@ -4,16 +4,14 @@
   "description": "",
   "main": "clean.js",
   "scripts": {
-    "start" : "parcel index.html",
-    "build" : "parcel build index.hmtl"
+    "start": "parcel index.html",
+    "build": "parcel build index.hmtl"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "leaflet": "^1.8.0",
-    "lodash-es": "^4.17.21"
-  },
-  "devDependencies": {
-    "parcel": "^2.6.1"
+    "lodash-es": "^4.17.21",
+    "parcel": "^1.12.4"
   }
 }

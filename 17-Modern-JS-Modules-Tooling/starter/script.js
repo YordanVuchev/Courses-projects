@@ -1,11 +1,11 @@
-// import { addToCart, a, b } from './shoppingCart.js';
+import { addToCart, a, b } from './shoppingCart.js';
+import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
+console.log('importing module');
 
-// console.log('importing module');
+addToCart('water', 10);
+console.log(a, b);
 
-// addToCart('water', 10);
-// console.log(a, b);
-
-// add('coca cola', 15);
+add('coca cola', 15);
 
 /////////////////////////////
 // TOP LEVEL AWAIT
@@ -51,9 +51,16 @@
 //   return addToCart, cart, totalPrice, totalQuantity;
 // })();
 
-import add from './shoppingCart.js';
-import cloneDeep from './node_modules/lodash-es/cloneDeep.js';
-
 if (module.hot) {
   module.hot.accept();
 }
+
+class Person {
+  greeting = 'Hey';
+  constructor(name) {
+    this.name = name;
+    console.log(`${this.greeting}, ${this.name}`);
+  }
+}
+
+const yordan = new Person('Yordan');
